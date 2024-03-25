@@ -39,12 +39,15 @@ MUSL_EXEC_PREFIX := $(CURDIR)/musl-install/
 MUSL_LIB_PREFIX := $(CURDIR)/musl-install/lib
 export PATH := $(CURDIR)/musl-install/bin:$(PATH)
 
-MUSL_GCC := musl-gcc -L $(CURDIR)/musl-install/lib -I $(CURDIR)/musl-install/include
+MUSL_GCC := $(shell readlink -f musl-install/bin/musl-gcc) \
+			-L $(CURDIR)/musl-install/lib \
+			-I $(CURDIR)/musl-install/include \
+			-I $(CURDIR)/test/
 none:
 	@echo "PWD is " $(CURDIR)
 	@echo "Valid target [none/download/build-musl/init/test/clean-test]"
 
-download:
+musl-src:
 	mkdir -p musl-src
 	wget $(MUSL_SRC_URL) -O musl-src.tar.gz 
 	tar -xzf musl-src.tar.gz --strip-components 1 -C musl-src 
@@ -52,39 +55,42 @@ download:
 	# cd musl-src
 	echo $(CURDIR)
 # https://wiki.musl-libc.org/getting-started.html
-build-musl:
+.PHONY: download
+download: musl-src
+
+musl-build musl-install: musl-src
 	mkdir -p musl-build $(MUSL_PREFIX) $(MUSL_LIB_PREFIX) $(MUSL_EXEC_PREFIX)
 	cd musl-build &&\
-	../musl-src/configure \
+	CFLAGS='-Og' ../musl-src/configure \
 		--enable-debug \
 		--prefix=$(MUSL_PREFIX) \
 		--exec-prefix=$(MUSL_EXEC_PREFIX) \
 		--syslibdir=$(MUSL_LIB_PREFIX) && \
 	make && make install
 # https://github.com/rofl0r/musl/blob/master/INSTALL
-init: download build-musl
+init: musl-src musl-build musl-install
 
-.PHONY: test
-test: build-musl
-	cd test &&\
+.PHONY: run
+run: musl-install
+	cd src &&\
 	$(MUSL_GCC) -ggdb -Og -Wall *.c &&\
 	./a.out 
-test-static: build-musl
-	cd test &&\
+run-static: musl-install
+	cd src &&\
 	$(MUSL_GCC) -ggdb -Og -Wall --static *.c &&\
 	./a.out 
-debug:test
+debug: run
 	tgdb test/a.out
 
-clean-test:
-	cd test &&\
+clean-run:
+	cd src &&\
 	rm -f *.out *.o
 	
 
 
-clean-download:
+clean-musl-src:
 	rm -rf musl-src
-clean-build-musl:
+clean-musl-build:
 	rm -rf musl-build $(MUSL_PREFIX)
-clean:clean-download clean-build-musl clean-test
+clean: clean-musl-src clean-musl-build clean-run
 	
