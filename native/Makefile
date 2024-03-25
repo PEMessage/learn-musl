@@ -67,11 +67,11 @@ init: download build-musl
 .PHONY: test
 test: build-musl
 	cd test &&\
-	$(MUSL_GCC) -ggdb -Wall hello.c &&\
+	$(MUSL_GCC) -ggdb -Og -Wall hello.c &&\
 	./a.out 
 test-static: build-musl
 	cd test &&\
-	$(MUSL_GCC) -ggdb -Wall --static hello.c &&\
+	$(MUSL_GCC) -ggdb -Og -Wall --static hello.c &&\
 	./a.out 
 debug:test
 	tgdb test/a.out
