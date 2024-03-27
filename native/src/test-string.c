@@ -2,11 +2,31 @@
 #include <string.h>
 
 
-char *str = "Hello World, this is a test" ;
+
 
 int test_strtok() {
-    char *cmd = strtok(str, " ");
+    // THIS NOT WORK: segmentation-fault
+    //      char *str = "Hello World, this is a test" ;
+    //
+    // The problem is that you're attempting to modify a string literal.
+    // Doing so causes your program's behavior to be undefined.
+    // See: https://stackoverflow.com/questions/8957829/strtok-segmentation-fault
+    //
+    // Note: 
+    //      if using :
+    //      `char *str = "XXX"` is equal to `char const *str = "XXX"`
+    //      could easily reproduce this problem by add const to char[]
+    //      `const char str[] = "Hello World, this is a test" ;`
+    char str[] = "Hello World, this is a test" ;
+
+    char *cmd = strtok((char *)str, " ");
+
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wformat-security"
+    printf(cmd);
+    #pragma GCC diagnostic pop
     if ( cmd == NULL ) return 1;
+
     return 0;
 
 }
