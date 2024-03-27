@@ -79,7 +79,7 @@ run-static: musl-install
 	cd src &&\
 	$(MUSL_GCC) -ggdb -Og -Wall --static *.c &&\
 	./a.out 
-debug: run
+debug:
 	tgdb test/a.out
 
 clean-run:
