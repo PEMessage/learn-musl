@@ -31,6 +31,11 @@ int test_strtok() {
 
     char *cmd = strtok((char *)str, " ");
     printf("This is retrun: %s\n",cmd);
+    // >>> x/29c cmd
+    // 0x7fffffffdab0: 72 'H'  101 'e' 108 'l' 108 'l' 111 'o' 0 '\000'        87 'W'  111 'o'
+    // 0x7fffffffdab8: 114 'r' 108 'l' 100 'd' 44 ','  32 ' '  116 't' 104 'h' 105 'i'
+    // 0x7fffffffdac0: 115 's' 32 ' '  105 'i' 115 's' 32 ' '  97 'a'  32 ' '  116 't'
+    // 0x7fffffffdac8: 101 'e' 115 's' 116 't' 0 '\000'        -1 '\377'
 
     if ( cmd == NULL ) return 1;
     return 0;

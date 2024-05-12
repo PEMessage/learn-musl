@@ -3,4 +3,5 @@ musl-install/
 musl-src/    
 a.out
 compile_command*
+.gdb_history
 .cache/
