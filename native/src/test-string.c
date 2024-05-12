@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
+void test_header(const char *funcname) {
+    printf("=========================\n");
+    printf("FUNCNAME: %s\n",funcname);
+    printf("=========================\n");
+}
 
 
 
@@ -17,21 +22,23 @@ int test_strtok() {
     //      `char *str = "XXX"` is equal to `char const *str = "XXX"`
     //      could easily reproduce this problem by add const to char[]
     //      `const char str[] = "Hello World, this is a test" ;`
+    test_header(__func__);
+
     char str[] = "Hello World, this is a test" ;
+    printf("This is arg1: %s\n",str);
+    printf("This is arg2: \" \"\n");
+
 
     char *cmd = strtok((char *)str, " ");
+    printf("This is retrun: %s\n",cmd);
 
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wformat-security"
-    printf(cmd);
-    #pragma GCC diagnostic pop
     if ( cmd == NULL ) return 1;
-
     return 0;
 
 }
 
 void test_strspn(void) {
+    test_header(__func__);
     char *a = "1";
     char *b = "12";
     char *a1 = "2";

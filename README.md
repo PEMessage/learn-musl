@@ -5,5 +5,5 @@
 1. quicktest
 ```
 cd native
-make run
+bear --append -- make run
 ```
